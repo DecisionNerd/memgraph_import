@@ -1,7 +1,7 @@
 [project]
 name = "memgraph-import"
 version = "0.1.0"
-description = "Add your description here"
+description = "Importing knowledge graphs into Memgraph"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
