@@ -14,13 +14,20 @@ A Python package for processing literary texts into knowledge graphs for Memgrap
 ## Installation
 
 ```bash
-pip install memgraph-import
+uv pip install memgraph-import
 ```
 
 ## Usage
 
 ```python
-from memgraph_import import process_novel_file, generate_knowledge_graph, export_knowledge_graph
+from memgraph_import import (
+    process_novel_file,
+    generate_knowledge_graph,
+    export_knowledge_graph,
+    process_dataframe_kg_json,
+    extract_all_entities,
+    MemgraphImporter,
+)
 
 # Process a novel file
 novel_data = process_novel_file(
@@ -40,6 +47,21 @@ export_knowledge_graph(
     graph=graph,
     output_path="output/knowledge_graph.json"
 )
+
+# ``novel_data_dataframe`` is a pandas DataFrame that contains a ``kg_json`` column
+# with responses from the Gemini API.
+processed_df, stats = process_dataframe_kg_json(novel_data_dataframe)
+
+# Extract nodes and relationships
+entities_df = extract_all_entities(processed_df)
+
+# Import directly into Memgraph
+importer = MemgraphImporter()
+importer.connect()
+importer.create_indexes()
+importer.import_nodes_batch(importer.prepare_nodes_data(entities_df))
+importer.import_relationships_batch(importer.prepare_relationships_data(entities_df))
+importer.close()
 ```
 
 ## Knowledge Graph Schema
