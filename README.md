@@ -86,9 +86,9 @@ RETURN created_rel;
 ## Development
 
 1. Clone the repository
-2. Create a virtual environment: `python -m venv .venv`
+2. Create a virtual environment: `uv venv`
 3. Activate the virtual environment: `source .venv/bin/activate`
-4. Install development dependencies: `pip install -e ".[dev]"`
+4. Install development dependencies: `uv sync`
 5. Run tests: `pytest`
 
 ## License
