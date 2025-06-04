@@ -89,6 +89,39 @@ class GeminiClient:
         # and convert it into the appropriate model objects
         return self._parse_response(response)
 
+    async def generate_knowledge_graph_async(self, chunk: NovelChunk) -> KnowledgeGraph:
+        """Asynchronously generate a knowledge graph from a novel chunk."""
+        contents = [
+            types.Content(
+                role="user",
+                parts=[
+                    types.Part.from_text(
+                        text=f"""
+                        Author: {chunk.author}
+                        Book: {chunk.book}
+                        Chapter: {chunk.chapter}
+                        chunk_order_number: {chunk.chunk_order_number}
+                        Chunk: {chunk.chunk}
+                        Datetime: {datetime.utcnow().isoformat()}
+                        """
+                    ),
+                ],
+            ),
+        ]
+
+        generate_content_config = types.GenerateContentConfig(
+            response_mime_type="application/json",
+            system_instruction=[types.Part.from_text(text=self.system_instruction)],
+        )
+
+        response = await self.client.aio.models.generate_content(
+            model=self.model,
+            contents=contents,
+            config=generate_content_config,
+        )
+
+        return self._parse_response(response)
+
     def _parse_response(self, response: Any) -> KnowledgeGraph:
         """
         Parse the Gemini API response into a KnowledgeGraph object.
